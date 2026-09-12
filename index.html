@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title">Hotel Ararat | Budget Accommodation</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Modern Design System & Variables */
+        :root {
+            --primary: #1e293b;       
+            --secondary: #d97706;     
+            --accent: #0f766e;        
+            --bg-light: #f8fafc;      
+            --text-dark: #0f172a;     
+            --text-muted: #64748b;    
+            --radius: 12px;           
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            color: var(--text-dark);
+            line-height: 1.7;
+            background-color: var(--bg-light);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- ARABIC ONLY FONT OVERRIDES --- */
+        html[lang="ar"] * { font-family: 'Cairo', sans-serif; }
+        html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3, html[lang="ar"] .logo {
+            font-family: 'Amiri', serif; font-weight: 700;
+        }
+
+        /* --- KURDISH ONLY FONT OVERRIDES --- */
+        html[lang="ku"] * {
+            font-family: 'Noto Naskh Arabic', serif !important;
+            line-height: 1.9 !important;
+        }
+        html[lang="ku"] h1, html[lang="ku"] h2, html[lang="ku"] h3, html[lang="ku"] .logo, html[lang="ku"] strong {
+            font-weight: 700 !important;
+        }
+
+        /* Language Top Bar */
+        .lang-bar {
+            background-color: #0f172a;
+            padding: 10px 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        html[dir="rtl"] .lang-bar { justify-content: flex-start; }
+
+        .lang-btn {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 4px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 6px;
+            transition: var(--transition);
+            cursor: pointer;
+            background: none;
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            color: #fff;
+            border-color: var(--secondary);
+            background-color: var(--secondary);
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: rgba(30, 41, 59, 0.95);
+            color: #fff;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        /* JavaScript Scroll Class for Nav Bar */
+        nav.scrolled {
+            background-color: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 0.9rem 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        nav .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #fff;
+            border-left: 3px solid var(--secondary);
+            padding-left: 10px;
+        }
+
+        html[dir="rtl"] nav .logo {
+            border-left: none;
+            border-right: 3px solid var(--secondary);
+            padding-left: 0;
+            padding-right: 10px;
+        }
+
+        nav ul { display: flex; list-style: none; align-items: center; }
+        nav ul li { margin-left: 24px; }
+        html[dir="rtl"] nav ul li { margin-right: 24px; margin-left: 0; }
+        nav ul li a {
+            color: #cbd5e1; text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: var(--transition);
+        }
+        nav ul li a:hover { color: var(--secondary); }
+
+        /* 🔄 HERO / HEADER SHOWCASE SLIDESHOW STYLES 🔄 */
+        .hero {
+            position: relative;
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding: 0 24px;
+            overflow: hidden;
+        }
+
+        .hero-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hero-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .hero-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Overlay tint so text remains clearly readable */
+        .hero-slide::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.60));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero h1 { font-size: 3.5rem; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px; }
+        html[dir="rtl"] .hero h1 { font-size: 3.8rem; }
+        .hero p { font-size: 1.25rem; margin-bottom: 32px; max-width: 700px; color: #e2e8f0; font-weight: 300; }
+
+        .btn {
+            background-color: var(--secondary); color: #fff; padding: 14px 36px; text-decoration: none;
+            font-weight: 600; border-radius: var(--radius); box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4); transition: var(--transition);
+        }
+        .btn:hover { background-color: #b45309; transform: translateY(-2px); }
+
+        /* Section Global Typography Styling */
+        section { padding: 80px 24px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2.2rem; font-weight: 700; color: var(--primary); margin-bottom: 12px; }
+        .section-subtitle { text-align: center; max-width: 600px; margin: 0 auto 50px auto; color: var(--text-muted); font-size: 1.05rem; }
+
+        /* The 3 Hotel Promises / Feature Grid */
+        .promises { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        .promise-card {
+            background: #fff; padding: 40px 30px; border-radius: var(--radius); box-shadow: var(--shadow);
+            border: 1px solid #f1f5f9; transition: var(--transition);
+        }
+        .promise-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1); }
+        .promise-card h3 { margin-bottom: 14px; color: var(--primary); font-size: 1.35rem; font-weight: 600; }
+        .promise-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* Luxury Call To Action Room Section */
+        .rooms-cta-section { background: #fff; max-width: 100%; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; }
+        
+        .btn-secondary {
+            background-color: var(--primary); color: #fff; padding: 14px 36px; text-decoration: none;
+            font-weight: 600; border-radius: var(--radius); transition: var(--transition); display: inline-block;
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.15);
+        }
+        .btn-secondary:hover { background-color: var(--secondary); box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3); transform: translateY(-2px); }
+
+        /* AUTOMATIC SLIDER SYSTEM FOR STAFF */
+        .slider-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #f1f5f9;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        .slide-card {
+            min-width: 100%;
+            background: #fff;
+            text-align: center;
+            padding-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-card img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+        }
+
+        .slide-card h3 {
+            margin: 20px 0 6px 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .slide-card p {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background-color: var(--secondary);
+            transform: scale(1.2);
+        }
+
+        /* Footer System */
+        footer { background-color: #0f172a; color: #f8fafc; text-align: center; padding: 50px 24px 30px 24px; margin-top: 60px; }
+        footer p { font-size: 1rem; margin-bottom: 12px; }
+        .contact-info { font-size: 0.95rem; color: #94a3b8; margin-bottom: 12px; }
+        
+        .location-link, .location-link:visited {
+            display: inline-block; color: #fff; background-color: var(--accent); text-decoration: none;
+            font-weight: 500; margin-top: 15px; padding: 10px 24px; border-radius: 6px; transition: var(--transition);
+        }
+        .location-link:hover { background-color: #0d9488; transform: translateY(-1px); }
+
+        /* Animation System */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            html[dir="rtl"] .hero h1 { font-size: 2.7rem; }
+            nav { padding: 1rem; }
+            nav ul { display: none; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-bar">
+        <button class="lang-btn" onclick="changeLanguage('en')">English</button>
+        <button class="lang-btn" onclick="changeLanguage('ku')">Kurdî (Badînî)</button>
+        <button class="lang-btn" onclick="changeLanguage('ar')">العربية</button>
+    </div>
+
+    <nav id="mainNav">
+        <div class="logo">HOTEL ARARAT</div>
+        <ul>
+            <li><a href="#about" data-i18n="nav_offer">What We Offer</a></li>
+            <li><a href="RoomsAndRates.html" data-i18n="nav_rates">Rooms & Rates</a></li>
+            <li><a href="#staff" data-i18n="nav_staff">Our Staff</a></li>
+            <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- 🔄 HERO SLIDESHOW HEADER 🔄 -->
+    <header class="hero">
+        <div class="hero-slider" id="heroSliderContainer">
+            <div class="hero-wrapper" id="heroSliderWrapper">
+                <!-- Add or change background photos here -->
+                <div class="hero-slide"><img src="images/KeliaShada.jpg" alt="Duhok View from the mountains"></div>
+                <div class="hero-slide"><img src="images/DuhokDam.jpg" alt="Duhok Dam"></div>
+                <div class="hero-slide"><img src="images/DuhokView.jpg" alt="Duhok City View"></div>
+                <div class="hero-slide"><img src="images/HotelFrontView.jpg" alt="Suite Ararat Hotel Front View"></div>
+
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <h1 data-i18n="hero_title">No Frills. Just Savings.</h1>
+            <p data-i18n="hero_desc">At Hotel Ararat, we skip the expensive luxury to give you exactly what you need: a clean bed, hot water, and a safe place to sleep at an unbeatable price.</p>
+            <a href="#contact" class="btn" data-i18n="hero_btn">Book Your Bed Now</a>
+        </div>
+    </header>
+
+    <section id="about">
+        <h2 class="section-title animate-on-scroll" data-i18n="nav_offer">What We Offer</h2>
+        <p class="section-subtitle animate-on-scroll" data-i18n="hero_desc">We prioritize simple comforts and absolute cleanliness to support your journey perfectly.</p>
+        <div class="promises">
+            <div class="promise-card animate-on-scroll">
+                <h3 data-i18n="promise1_title">🧼 Sparkly Clean</h3>
+                <p data-i18n="promise1_desc">We might not have a spa, but our sheets are crisp, our floors are scrubbed, and hygiene is our top priority.</p>
+            </div>
+            <div class="promise-card animate-on-scroll">
+                <h3 data-i18n="promise2_title">📹Security Cameras</h3>
+                <p data-i18n="promise2_desc">Your safety is our priority. Security cameras are operating 24/7 throughout the building and public areas to ensure a safe and secure environment.</p>
+            </div>
+            <div class="promise-card animate-on-scroll">
+                <h3 data-i18n="promise3_title">🌐 Free Wi-Fi</h3>
+                <p data-i18n="promise3_desc">Stay connected. We provide high-speed internet access throughout the building entirely for free.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="rooms-cta-section">
+        <h2 class="section-title animate-on-scroll" data-i18n="rates_title">Our Accommodations</h2>
+        <p class="section-subtitle animate-on-scroll" data-i18n="rooms_cta_desc">Explore our variety of simple, budget-friendly rooms designed to give you a comfortable night's stay.</p>
+        <a href="RoomsAndRates.html" class="btn-secondary animate-on-scroll" data-i18n="btn_view_rooms">View Rooms & Photo Gallery →</a>
+    </section>
+
+    <section id="staff">
+        <h2 class="section-title animate-on-scroll" data-i18n="staff_title">The Friendly Faces of Ararat</h2>
+        <p class="section-subtitle animate-on-scroll" data-i18n="staff_desc">We don't have a massive corporate team, but we do have local experts who are here 24/7 to make sure your stay is smooth and safe.</p>
+        
+        <div class="slider-container animate-on-scroll">
+            <div class="slider-wrapper" id="sliderWrapper">
+                
+                <div class="slide-card">
+                    <img src="images/Manager.jpg" alt="Hotel Manager">
+                    <h3>Mohammed Suliman</h3>
+                    <p data-i18n="role_mgr">General Manager</p>
+                </div>
+                
+                <div class="slide-card">
+                    <img src="images/Staff.jpg" alt="Front Desk Receptionist">
+                    <h3>Our Staff</h3>
+                    <p data-i18n="role_desk">Front Desk & Guest Services</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="slider-dots" id="sliderDots"></div>
+    </section>
+
+    <footer id="contact">
+        <p><strong data-i18n="footer_ready">Ready to save? Contact us directly to secure the lowest rate.</strong></p>
+        <p class="contact-info">
+            <span data-i18n="footer_phone">📞 Phone:</span> +964 (750) 364-8118 | 
+            <span data-i18n="footer_phone">📞 Phone:</span> +49 (1521) 030-8851 | 
+            <span data-i18n="footer_email">✉️ Email:</span> BERWARI100@gmail.com
+        </p>
+        <p class="contact-info">
+            <a href="https://maps.apple/p/-.y~DimbDxyJxc" target="_blank" class="location-link" data-i18n="footer_maps">📍 View Our Location on Google Maps</a>
+        </p>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0;">
+        <p style="font-size: 0.85rem; color: #64748b;">&copy; 2026 Suite Hotel Ararat. <span data-i18n="footer_rights">All rights reserved.</span></p>
+    </footer>
+
+    <script>
+        // 1. Translation System
+        const translations = {
+            en: {
+                dir: "ltr", title: "Hotel Ararat | Budget Accommodation", nav_offer: "What We Offer", nav_rates: "Rooms & Rates", nav_staff: "Our Staff", nav_contact: "Contact", hero_title: "No Frills. Just Savings.", hero_desc: "At Hotel Ararat, we skip the expensive luxury to give you exactly what you need: a clean bed, hot water, and a safe place to sleep at an unbeatable price.", hero_btn: "Book Your Bed Now", promise1_title: "🧼 Sparkly Clean", promise1_desc: "We might not have a spa, but our sheets are crisp, our floors are scrubbed, and hygiene is our top priority.", promise2_title: "📹Security Cameras", promise2_desc: "Your safety is our priority. Security cameras are operating 24/7 throughout the building and public areas to ensure a safe and secure environment.", promise3_title: "🌐 Free Wi-Fi", promise3_desc: "Stay connected. We provide high-speed internet access throughout the building entirely for free.", rates_title: "Our Accommodations", rooms_cta_desc: "Explore our variety of simple, budget-friendly rooms designed to give you a comfortable night's stay.", btn_view_rooms: "View Rooms & Photo Gallery →", staff_title: "The Friendly Faces of Ararat", staff_desc: "We don't have a massive corporate team, but we do have local experts who are here 24/7 to make sure your stay is smooth and safe.", role_mgr: "General Manager", role_desk: "Front Desk & Guest Services", footer_ready: "Ready to save? Contact us directly to secure the lowest rate.", footer_phone: "📞 Phone:", footer_email: "✉️ Email:", footer_maps: "View Our Location on Google Maps", footer_rights: "All rights reserved."
+            },
+            ku: {
+                dir: "rtl", 
+                title: "هوتێل ئارارات | ئاکۆمۆدێشنا گونجاو", 
+                nav_offer: "خزمەتگوزاریێن مە", 
+                nav_rates: "ژوور و نرخ", 
+                nav_staff: "کارمەندێن مە", 
+                nav_contact: "پەیوەندی", 
+                hero_title: "بێ مەسرەفیێن زێدە. تنێ پاشکەوتکرن.", 
+                hero_desc: "ل هوتێل ئارارات، ئەم خزمەتگوزاریێن لوکس یێن گران ل لایەکێ ددەین دا کو تشتی بدەینە تە یێ کو تو تەمام پێدڤی پێ هەی: نڤینەکا پاقژ، ئاڤا گەرم، و جهەکێ ب سلامەت بۆ نڤستنێ ب نرخەکێ بێ وێنە.", 
+                hero_btn: "نوکە ژوورا خۆ حجز بکە", 
+                promise1_title: "🧼 گەلەک پاقژ", 
+                promise1_desc: "مەربەقا مە یا مەزن نینە، بەلێ سەرنڤینێن مە پاقژن، عەردێ مە یێ شیشتییە، و پاقژی کارێ مە یێ هەرە پێشینە.", 
+                promise2_title: "📹کامێرێن چاڤدێریێ", 
+                promise2_desc: "سلامەتیا تە پێشەنگیا مە یە. کامێرێن چاڤدێریێ ٢٤/٧ ل سەرانسەری ئاڤاهی و جهێن گشتی د کاردان دا کو ژینگەهەکا بێوەی و پاراستی دەستەبەر بکەن.", 
+                promise3_title: "🌐 وای فای ب خۆڕایی", 
+                promise3_desc: "د پەیوەندیێدا بمینە. ئەم ئینتەرنێتەکا خێرا ل سەرانسەری ئاڤاهی ب تەمامی ب خۆڕایی دابین دکەین.", 
+                rates_title: "جهێن مە یێن مانەوەیێ", 
+                rooms_cta_desc: "سەیری جۆرەۆجۆریا ژوورێن مە یێن سادە و گونجاو بکە کو بۆ دابینکرنا شەڤەکا ئارام بۆ تە هاتینە دیزاینکرن.", 
+                btn_view_rooms: "بینینا ژووران و گەلەریا وێنان ←", 
+                staff_title: "دەموچاوێن پر گرنژین یێن ئارارات", 
+                staff_desc: "تیما مە یا کۆمپانیێن مەزن نینە، بەلێ شارەزایێن مە یێن خۆجهی یێن هەین کو 24 دەمژمێران ل ڤێرەنە دا کو پشتڕاست ببن کو مانەوا تە یا ب سلامەت و ئارامە.", 
+                role_mgr: "ڕێڤەبەرێ گشتی", 
+                role_desk: "پێشوازی و خزمەتگوزاريا مێهڤانان", 
+                footer_ready: "ئامادەی بۆ پاشکەوتکرنێ? ڕاستەوخۆ پەیوەندیێ ب مە بکە بۆ دەستکەفتنا نزمترین نرخ.", 
+                footer_phone: "📞 تەلەفۆن:", 
+                footer_email: "✉️ ئیمێل:", 
+                footer_maps: "جهێ مە ل سەر نەخشەیێ گوگڵ ببینە", 
+                footer_rights: "همی ماف د پاراستینە."
+            },
+            ar: {
+                dir: "rtl", title: "فندق أرارات | إقامة اقتصادية", nav_offer: "ما نقدمه", nav_rates: "الغرف والأسعار", nav_staff: "موظفينا", nav_contact: "اتصل بنا", hero_title: "بدون تكاليف إضافية. توفير فقط.", hero_desc: "في فندق أرارات، نتخطى الرفاهية المكلفة لنمنحك ما تحتاجه تمامًا: سرير نظيف، مياه ساخنة، ومكان آمن للنوم بسعر لا يقبل المنافسة.", hero_btn: "احجز سريرك الآن", promise1_title: "🧼 نظافة مثالية", promise1_desc: "قد لا يكون لدينا منتجع صحي، ولكن أغطية الأسرة لدينا نظيفة تمامًا، وأرضياتنا مغسولة، والنظافة هي أولويتنا القصوى.", promise2_title: "📹كاميرات المراقبة", promise2_desc: "سلامتكم هي أولويتنا. تعمل كاميرات المراقبة على مدار الساعة (٢٤/٧) في جميع أنحاء المبنى والمناطق العامة لضمان بيئة آمنة ومحمية.", promise3_title: "🌐 واي فاي مجاني", promise3_desc: "ابق على اتصال. نحن نقدم خدمة الإنترنت عالي السرعة في جميع أنحاء المبنى مجانًا تمامًا.", rates_title: "خيارات الإقامة لدينا", rooms_cta_desc: "استكشف مجموعتنا المتنوعة من الغرف البسيطة والاقتصادية المصممة لتمنحك إقامة مريحة.", btn_view_rooms: "عرض الغرف ومعرض الصور ←", staff_title: "الوجوه الودودة في أرارات", staff_desc: "ليس لدينا فريق شركات ضخم، ولكن لدينا خبراء محليون متواجدون هنا على مدار الساعة طوال أيام الأسبوع لضمان إقامة سلسة وآمنة.", role_mgr: "المدير العام", role_desk: "الاستقبال وخدمة الضيوف", footer_ready: "هل أنت جاهز للتوفير? اتصل بنا مباشرة للحصول على أقل سعر.", footer_phone: "📞 الهاتف:", footer_email: "✉️ البريد الإلكتروني:", footer_maps: "شاهد موقعنا على خرائط جوجل", footer_rights: "جميع الحقوق محفوظة."
+            }
+        };
+
+        function changeLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = translations[lang].dir;
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    if (element.tagName === 'TITLE') { document.title = translations[lang][key]; } 
+                    else { element.textContent = translations[lang][key]; }
+                }
+            });
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(lang));
+            if(activeBtn) activeBtn.classList.add('active');
+            localStorage.setItem('hotelAraratLang', lang);
+        }
+
+        // 2. JavaScript Scroll Effects & Slider Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('hotelAraratLang') || 'en';
+            changeLanguage(savedLang);
+
+            // A. Navbar Glass effect on Scroll
+            const mainNav = document.getElementById('mainNav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    mainNav.classList.add('scrolled');
+                } else {
+                    mainNav.classList.remove('scrolled');
+                }
+            });
+
+            // B. Smooth Scroll Reveal Animation
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            const observerOptions = { root: null, threshold: 0.15, rootMargin: "0px 0px -20px 0px" };
+            const scrollObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        scrollObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            animatedElements.forEach(el => scrollObserver.observe(el));
+
+            // C. HERO HEADER SLIDESHOW ENGINE
+            const heroWrapper = document.getElementById('heroSliderWrapper');
+            const heroSlides = heroWrapper ? heroWrapper.querySelectorAll('.hero-slide') : [];
+            let heroIndex = 0;
+            const heroCount = heroSlides.length;
+
+            function updateHeroPosition() {
+                const isRTL = document.documentElement.dir === 'rtl';
+                if (isRTL) {
+                    heroWrapper.style.transform = `translateX(${heroIndex * 100}%)`;
+                } else {
+                    heroWrapper.style.transform = `translateX(-${heroIndex * 100}%)`;
+                }
+            }
+
+            if (heroCount > 1) {
+                setInterval(() => {
+                    heroIndex = (heroIndex + 1) % heroCount;
+                    updateHeroPosition();
+                }, 4000); // Transitions every 4 seconds
+            }
+
+            // D. STAFF SLIDESHOW ENGINE
+            const wrapper = document.getElementById('sliderWrapper');
+            const slides = document.querySelectorAll('.slide-card');
+            const dotsContainer = document.getElementById('sliderDots');
+            let currentIndex = 0;
+            const slideCount = slides.length;
+            const intervalTime = 3000;
+
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+            });
+
+            const dots = document.querySelectorAll('.dot');
+
+            function updateSliderPosition() {
+                const isRTL = document.documentElement.dir === 'rtl';
+                if(isRTL) {
+                    wrapper.style.transform = `translateX(${currentIndex * 100}%)`;
+                } else {
+                    wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }
+                dots.forEach(dot => dot.classList.remove('active'));
+                if(dots[currentIndex]) dots[currentIndex].classList.add('active');
+            }
+
+            function goToSlide(index) {
+                currentIndex = index;
+                updateSliderPosition();
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % slideCount;
+                updateSliderPosition();
+            }
+
+            let sliderInterval = setInterval(nextSlide, intervalTime);
+
+            const container = document.querySelector('.slider-container');
+            if (container) {
+                container.addEventListener('mouseenter', () => clearInterval(sliderInterval));
+                container.addEventListener('mouseleave', () => sliderInterval = setInterval(nextSlide, intervalTime));
+            }
+            
+            // Re-align layout variables when language direction toggles
+            window.addEventListener('click', () => {
+                setTimeout(() => {
+                    updateHeroPosition();
+                    updateSliderPosition();
+                }, 50);
+            });
+        });
+    </script>
+</body>
+</html>

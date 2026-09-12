@@ -1,17 +1,17 @@
-# ararathotel
+# Suite Ararat Hotel
 
-A new Flutter project.
+Static website for Suite Ararat Hotel in Duhok, Iraq — plain HTML/CSS/JS, no build step.
 
-## Getting Started
+- `index.html` — home page (hotel info, amenities, staff)
+- `RoomsAndRates.html` — room types, photos, and prices
+- `images/` — photos used on both pages
 
-This project is a starting point for a Flutter application.
+Supports English, Kurdish (Badini), and Arabic via an in-page translation script, with RTL layout for Kurdish and Arabic. The "Book Now" / "Book Your Bed Now" buttons link to the contact section — there is no online booking, guests are expected to call or email directly.
 
-A few resources to get you started if this is your first Flutter project:
+To preview locally, serve this folder with any static file server, e.g.:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```
+python3 -m http.server 8000
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+then open `http://localhost:8000`.

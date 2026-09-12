@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title">Rooms & Rates | Hotel Ararat</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Modern Design System & Variables */
+        :root {
+            --primary: #1e293b;
+            --secondary: #d97706;
+            --bg-light: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --radius: 16px;
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { color: var(--text-dark); line-height: 1.7; background-color: var(--bg-light); -webkit-font-smoothing: antialiased; }
+
+        /* --- ARABIC ONLY FONT OVERRIDES --- */
+        html[lang="ar"] * { font-family: 'Cairo', sans-serif; }
+        html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3, html[lang="ar"] .logo {
+            font-family: 'Amiri', serif; font-weight: 700;
+        }
+
+        /* --- KURDISH ONLY FONT OVERRIDES --- */
+        html[lang="ku"] * {
+            font-family: 'Noto Naskh Arabic', serif !important;
+            line-height: 1.9 !important;
+        }
+        html[lang="ku"] h1, html[lang="ku"] h2, html[lang="ku"] h3, html[lang="ku"] .logo, html[lang="ku"] strong {
+            font-weight: 700 !important;
+        }
+
+        /* Language Top Bar */
+        .lang-bar {
+            background-color: #0f172a; padding: 10px 2rem; display: flex; justify-content: flex-end; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        html[dir="rtl"] .lang-bar { justify-content: flex-start; }
+
+        .lang-btn {
+            color: #94a3b8; text-decoration: none; font-size: 0.8rem; font-weight: 500; padding: 4px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 6px; transition: var(--transition); cursor: pointer; background: none;
+        }
+        .lang-btn:hover, .lang-btn.active { color: #fff; border-color: var(--secondary); background-color: var(--secondary); }
+
+        /* Navigation */
+        nav {
+            background-color: rgba(30, 41, 59, 0.95); color: #fff; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        nav .logo { font-size: 1.4rem; font-weight: 700; letter-spacing: 1.5px; color: #fff; border-left: 3px solid var(--secondary); padding-left: 10px; }
+        html[dir="rtl"] nav .logo { border-left: none; border-right: 3px solid var(--secondary); padding-left: 0; padding-right: 10px; }
+        nav ul { display: flex; list-style: none; }
+        nav ul li { margin-left: 24px; }
+        html[dir="rtl"] nav ul li { margin-right: 24px; margin-left: 0; }
+        nav ul li a { color: #cbd5e1; text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: var(--transition); }
+        nav ul li a:hover { color: var(--secondary); }
+
+        /* Container & Titles */
+        .container { max-width: 1000px; margin: 60px auto; padding: 0 24px; }
+        .page-title { text-align: center; color: var(--primary); margin-bottom: 50px; font-size: 2.4rem; font-weight: 700; }
+
+        /* Modern Room Showcase Row Cards */
+        .room-grid { display: flex; flex-direction: column; gap: 40px; }
+        
+        .room-card {
+            background-color: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
+            display: flex; flex-direction: row; border: 1px solid #e2e8f0; transition: var(--transition);
+        }
+        .room-card:hover { transform: translateY(-4px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); }
+        html[dir="rtl"] .room-card { flex-direction: row-reverse; }
+
+        /* ROOM IMAGE SLIDER AREA */
+        .room-image { 
+            flex: 1.2; 
+            min-height: 300px; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        
+        .slider-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-item {
+            min-width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .slide-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+            transition: var(--transition); 
+        }
+        
+        .room-card:hover .slide-item img { transform: scale(1.04); }
+
+        /* Dynamic dots placed over the bottom of the image */
+        .slider-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 6px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background-color: var(--secondary);
+            transform: scale(1.2);
+        }
+
+        /* Card Text styling */
+        .room-details { flex: 1.8; padding: 40px; display: flex; flex-direction: column; }
+        .room-details h2 { color: var(--primary); margin-bottom: 12px; font-size: 1.7rem; font-weight: 700; }
+        .room-amenities { color: var(--text-muted); margin-bottom: 30px; font-size: 1rem; }
+
+        .room-pricing-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 20px; border-top: 1px solid #f1f5f9; }
+        .room-price { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
+
+        .btn-book {
+            background-color: var(--secondary); color: white; text-decoration: none; padding: 10px 28px;
+            border-radius: 8px; font-weight: 600; transition: var(--transition); box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2);
+        }
+        .btn-book:hover { background-color: #b45309; transform: translateY(-1px); }
+
+        /* Animation System */
+        .animate-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .room-card, html[dir="rtl"] .room-card { flex-direction: column; }
+            .room-image { height: 280px; min-height: auto; }
+            .room-details { padding: 24px; }
+        }
+
+        /* Footer */
+        footer { background-color: #0f172a; color: #f8fafc; text-align: center; padding: 40px 24px; margin-top: 80px; }
+        footer p { font-size: 0.95rem; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <div class="lang-bar">
+        <button class="lang-btn" onclick="changeLanguage('en')">English</button>
+        <button class="lang-btn" onclick="changeLanguage('ku')">Kurdî (Badînî)</button>
+        <button class="lang-btn" onclick="changeLanguage('ar')">العربية</button>
+    </div>
+
+    <nav>
+        <div class="logo">HOTEL ARARAT</div>
+        <ul>
+            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+            <li><a href="index.html#about" data-i18n="nav_offer">What We Offer</a></li>
+            <li><a href="index.html#staff" data-i18n="nav_staff">Our Staff</a></li>
+            <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h1 class="page-title animate-card" data-i18n="rates_title">Simple Rooms, Transparent Rates</h1>
+        
+        <div class="room-grid">
+            
+            <!-- 1. Single Room -->
+            <div class="room-card animate-card room-slider-card">
+                <div class="room-image">
+                    <div class="slider-wrapper">
+                        <div class="slide-item"><img src="images/SingleRoom.jpg" alt="Single Room View 1"></div>
+                        <div class="slide-item"><img src="images/SingleRoom1.jpg" alt="Single Room View 2"></div>
+                    </div>
+                    <div class="slider-dots"></div>
+                </div>
+                <div class="room-details">
+                    <h2 data-i18n="room1_name">Single Room</h2>
+                    <p class="room-amenities" data-i18n="room1_details">1 Single Bed, Shared Bathroom, Fan, Free Wi-Fi</p>
+                    <div class="room-pricing-row">
+                        <span class="room-price">10,000 -> 20,000 IQD <small style="font-size:0.85rem; font-weight:normal; color: var(--text-muted);" data-i18n="per_night">/ night</small></span>
+                        <a href="index.html#contact" class="btn-book" data-i18n="btn_book">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Double Room -->
+            <div class="room-card animate-card room-slider-card">
+                <div class="room-image">
+                    <div class="slider-wrapper">
+                        <div class="slide-item"><img src="images/SleepingD.jpg" alt="Standard Double Room View 1"></div>
+                        <div class="slide-item"><img src="images/HallD.jpg" alt="Standard Double Room View 2"></div>
+                    </div>
+                    <div class="slider-dots"></div>
+                </div>
+                <div class="room-details">
+                    <h2 data-i18n="room2_name">Double Room</h2>
+                    <p class="room-amenities" data-i18n="room2_details">1 Double Bed, Private Bathroom, TV, Fan</p>
+                    <div class="room-pricing-row">
+                        <span class="room-price">15,000 -> 20,000 IQD <small style="font-size:0.85rem; font-weight:normal; color: var(--text-muted);" data-i18n="per_night">/ night</small></span>
+                        <a href="index.html#contact" class="btn-book" data-i18n="btn_book">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Triple Room -->
+            <div class="room-card animate-card room-slider-card">
+                <div class="room-image">
+                    <div class="slider-wrapper">
+                        <div class="slide-item"><img src="images/Triple.jpg" alt="Triple Room View 1"></div>
+                        <div class="slide-item"><img src="images/Triple.jpg" alt="Triple Room View 2"></div>
+                    </div>
+                    <div class="slider-dots"></div>
+                </div>
+                <div class="room-details">
+                    <h2 data-i18n="room3_name">Triple Room</h2>
+                    <p class="room-amenities" data-i18n="room3_details">1 Double Bed + 1 Single Bed, Private Bathroom, TV, Fan</p>
+                    <div class="room-pricing-row">
+                        <span class="room-price">25,000 -> 40,000 IQD <small style="font-size:0.85rem; font-weight:normal; color: var(--text-muted);" data-i18n="per_night">/ night</small></span>
+                        <a href="index.html#contact" class="btn-book" data-i18n="btn_book">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 1 Room + Hall -->
+            <div class="room-card animate-card room-slider-card">
+                <div class="room-image">
+                    <div class="slider-wrapper">
+                        <div class="slide-item"><img src="images/HallD.jpg" alt="1 Room and Hall View 1"></div>
+                        <div class="slide-item"><img src="images/SleepingD.jpg" alt="1 Room and Hall View 2"></div>
+                    </div>
+                    <div class="slider-dots"></div>
+                </div>
+                <div class="room-details">
+                    <h2 data-i18n="room4_name">1 Room + Hall</h2>
+                    <p class="room-amenities" data-i18n="room4_details">Bedroom + Living Hall, Private Bathroom, TV, AC/Fan</p>
+                    <div class="room-pricing-row">
+                        <span class="room-price">40,000 IQD <small style="font-size:0.85rem; font-weight:normal; color: var(--text-muted);" data-i18n="per_night">/ night</small></span>
+                        <a href="index.html#contact" class="btn-book" data-i18n="btn_book">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. The Apartment -->
+            <div class="room-card animate-card room-slider-card">
+                <div class="room-image">
+                    <div class="slider-wrapper">
+                        <div class="slide-item"><img src="images/Apartment.jpg" alt="Apartment View 1"></div>
+                        <div class="slide-item"><img src="images/Apartment1.jpg" alt="Apartment View 2"></div>
+                        <div class="slide-item"><img src="images/Apartment2.jpg" alt="Apartment View 3"></div>
+                        <div class="slide-item"><img src="images/Apartment3.jpg" alt="Apartment View 4"></div>
+                    </div>
+                    <div class="slider-dots"></div>
+                </div>
+                <div class="room-details">
+                    <h2 data-i18n="room5_name">The Apartment</h2>
+                    <p class="room-amenities" data-i18n="room5_details">Multiple Beds, Living Area, Private Bathroom, Lockers, Free Wi-Fi</p>
+                    <div class="room-pricing-row">
+                        <span class="room-price">30,000 -> 100,000 IQD <small style="font-size:0.85rem; font-weight:normal; color: var(--text-muted);" data-i18n="per_night">/ night</small></span>
+                        <a href="index.html#contact" class="btn-book" data-i18n="btn_book">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="contact">
+        <p style="margin-bottom: 10px;"><strong style="color: #fff;" data-i18n="footer_ready">Ready to save? Contact us directly to secure the lowest rate.</strong></p>
+        <p style="font-size: 0.9rem; color: #94a3b8;">
+            <span data-i18n="footer_phone">📞 Phone:</span> +964 (750) 364-8118 | 
+            <span data-i18n="footer_phone">📞 Phone:</span> +49 (1521) 030-8851 | 
+            <span data-i18n="footer_email">✉️ Email:</span> BERWARI100@gmail.com
+        </p>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+        <p style="font-size: 0.85rem; color: #64748b;">&copy; 2026 Hotel Ararat. <span data-i18n="footer_rights">All rights reserved.</span></p>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                dir: "ltr", 
+                title: "Rooms & Rates | Hotel Ararat", 
+                nav_home: "Home", nav_offer: "What We Offer", 
+                nav_staff: "Our Staff", nav_contact: "Contact", 
+                rates_title: "Simple Rooms, Transparent Rates", 
+                room1_name: "Single Room", 
+                room1_details: "1 Single Bed, Shared Bathroom, Fan, Free Wi-Fi", 
+                room2_name: "Double Room", 
+                room2_details: "1 Double Bed, Private Bathroom, TV, Fan", 
+                room3_name: "Triple Room", 
+                room3_details: "1 Double Bed + 1 Single Bed, Private Bathroom, TV, Fan", 
+                room4_name: "1 Room + Hall", 
+                room4_details: "Bedroom + Living Hall, Private Bathroom, TV, AC/Fan", 
+                room5_name: "The Apartment", 
+                room5_details: "Multiple Beds, Living Area, Private Bathroom, Lockers, Free Wi-Fi", 
+                per_night: "/ night", 
+                btn_book: "Book Now", 
+                footer_ready: "Ready to save? Contact us directly to secure the lowest rate.", 
+                footer_phone: "📞 Phone:", 
+                footer_email: "✉️ Email:", 
+                footer_rights: "All rights reserved."
+            },
+            ku: {
+                dir: "rtl", 
+                title: "ژوور و نرخ | هوتێل ئارارات", 
+                nav_home: "سەرەکی", 
+                nav_offer: "خزمەتگوزاریێن مە", 
+                nav_staff: "کارمەندێن مە", 
+                nav_contact: "پەیوەندی", 
+                rates_title: "ژوورێن سادە، نرخێن ڕوون", 
+                room1_name: "ژوورا تاک (ئێک کەسی)", 
+                room1_details: "1 نڤینا تاک, حەمامەکا هەڤپشک, پانکە، وای فای ب خۆڕایی", 
+                room2_name: "ژوورا دۆبڵ (دوو کەسی)", 
+                room2_details: "1 نڤینا دۆبڵ، حەماما تایبەت، تەلەفزیۆن، پانکە", 
+                room3_name: "ژوورا سێ کەسی", 
+                room3_details: "1 نڤینا دۆبڵ + 1 نڤینا تاک، حەماما تایبەت، تەلەفزیۆن، پانکە", 
+                room4_name: "١ ژوور + هۆڵ", 
+                room4_details: "ژوورا نڤستنێ + هۆڵا دانیشتنێ، حەماما تایبەت، تەلەفزیۆن، سپلیت/پانکە", 
+                room5_name: "ئەپارتمان (شۆقە)", 
+                room5_details: "چەندین نڤین، جهێ دانیشتنێ، حەماما تایبەت، دۆڵاب، وای فای ب خۆڕایی", 
+                per_night: "/ شەڤ", 
+                btn_book: "نوکە حجز بکە", 
+                footer_ready: "ئامادەی بۆ پاشکەوتکرنێ؟ ڕاستەوخۆ پەیوەندیێ ب مە بکە بۆ دەستکەفتنا نزمترین نرخ.", 
+                footer_phone: "📞 تەلەفۆن:", 
+                footer_email: "✉️ ئیمێل:", 
+                footer_rights: "همی ماف د پاراستینە."
+            },
+            ar: {
+                dir: "rtl", 
+                title: "الغرف والأسعار | فندق أرارات", 
+                nav_home: "الرئيسية", 
+                nav_offer: "ما نقدمه", 
+                nav_staff: "موظفينا", 
+                nav_contact: "اتصل بنا", 
+                rates_title: "غرف بسيطة، أسعار شفافة", 
+                room1_name: "غرفة مفردة", 
+                room1_details: "سرير مفرد، حمام مشترك، مروحة، واي فاي مجاني", 
+                room2_name: "غرفة مزدوجة", 
+                room2_details: "سرير مزدوج، حمام خاص، تلفزيون، مروحة", 
+                room3_name: "غرفة ثلاثية", 
+                room3_details: "سرير مزدوج + سرير مفرد، حمام خاص، تلفزيون، مروحة", 
+                room4_name: "غرفة + صالة", 
+                room4_details: "غرفة نوم + صالة معيشة، حمام خاص، تلفزيون، مكيف/مروحة", 
+                room5_name: "الشقة", 
+                room5_details: "أسرة متعددة، منطقة معيشة، حمام خاص، خزائن، واي فاي مجاني", 
+                per_night: "/ ليلة", 
+                btn_book: "احجز الآن", 
+                footer_ready: "هل أنت جاهز للتوفير؟ اتصل بنا مباشرة للحصول على أقل سعر.", 
+                footer_phone: "📞 الهاتف:", 
+                footer_email: "✉️ البريد الإلكتروني:", 
+                footer_rights: "جميع الحقوق محفوظة."
+            }
+        };
+
+        function changeLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = translations[lang].dir;
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    if (element.tagName === 'TITLE') { document.title = translations[lang][key]; } 
+                    else { element.textContent = translations[lang][key]; }
+                }
+            });
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(lang));
+            if(activeBtn) activeBtn.classList.add('active');
+            localStorage.setItem('hotelAraratLang', lang);
+        }
+
+        /* REUSABLE SLIDER SYSTEM FOR DYNAMIC CARD COUNTING */
+        function initCardSlider(cardElement) {
+            const wrapper = cardElement.querySelector('.slider-wrapper');
+            const slides = cardElement.querySelectorAll('.slide-item');
+            const dotsContainer = cardElement.querySelector('.slider-dots');
+            let currentIndex = 0;
+            const slideCount = slides.length;
+            const intervalTime = 3000;
+
+            if (slideCount <= 1) {
+                if (dotsContainer) dotsContainer.style.display = 'none';
+                return () => {};
+            }
+
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+            });
+
+            const dots = dotsContainer.querySelectorAll('.dot');
+
+            function updateSliderPosition() {
+                const isRTL = document.documentElement.dir === 'rtl';
+                if (isRTL) {
+                    wrapper.style.transform = `translateX(${currentIndex * 100}%)`;
+                } else {
+                    wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }
+                dots.forEach(d => d.classList.remove('active'));
+                if (dots[currentIndex]) dots[currentIndex].classList.add('active');
+            }
+
+            function goToSlide(index) {
+                currentIndex = index;
+                updateSliderPosition();
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % slideCount;
+                updateSliderPosition();
+            }
+
+            let sliderInterval = setInterval(nextSlide, intervalTime);
+
+            cardElement.addEventListener('mouseenter', () => clearInterval(sliderInterval));
+            cardElement.addEventListener('mouseleave', () => sliderInterval = setInterval(nextSlide, intervalTime));
+
+            return updateSliderPosition;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('hotelAraratLang') || 'en';
+            changeLanguage(savedLang);
+
+            // A. Intersection Observer Scroll Animations
+            const cards = document.querySelectorAll('.animate-card');
+            const cardObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => cardObserver.observe(card));
+
+            // B. Initialize Room Slideshow Sliders
+            const sliderInstances = [];
+            const roomCards = document.querySelectorAll('.room-slider-card');
+            roomCards.forEach(card => {
+                const updateFn = initCardSlider(card);
+                sliderInstances.push(updateFn);
+            });
+
+            // Re-align slides on language click (RTL layout shift)
+            window.addEventListener('click', () => {
+                setTimeout(() => {
+                    sliderInstances.forEach(updateFn => updateFn());
+                }, 50);
+            });
+        });
+    </script>
+</body>
+</html>
